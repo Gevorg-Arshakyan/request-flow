@@ -22,52 +22,99 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Request Flow Management System
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A NestJS-based system for managing anonymous requests with different statuses and actions.
+
+## Features
+
+- Create new requests
+- Take requests in progress
+- Complete requests with solutions
+- Cancel requests with reasons
+- Filter requests by date
+- Cancel all in-progress requests
+- Anonymous request handling
+- PostgreSQL database integration
+- TypeScript implementation
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- PostgreSQL
+- npm or yarn
 
 ## Installation
 
+1. Clone the repository
+2. Install dependencies:
 ```bash
-$ npm install
+npm install
 ```
 
-## Running the app
+3. Configure the database:
+   - Create a PostgreSQL database named `request_flow`
+   - Update database credentials in `src/app.module.ts` if needed
 
+4. Start the application:
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev
 ```
 
-## Test
+## API Endpoints
 
+### Create Request
+- **POST** `/requests`
+- **Body**:
+  ```json
+  {
+    "topic": "string",
+    "content": "string"
+  }
+  ```
+
+### Take Request in Progress
+- **PUT** `/requests/:id/take-in-progress`
+- **Params**: `id` (number)
+
+### Complete Request
+- **PUT** `/requests/:id/complete`
+- **Params**: `id` (number)
+- **Body**:
+  ```json
+  {
+    "solution": "string"
+  }
+  ```
+
+### Cancel Request
+- **PUT** `/requests/:id/cancel`
+- **Params**: `id` (number)
+- **Body**:
+  ```json
+  {
+    "cancellationReason": "string"
+  }
+  ```
+
+### Get All Requests
+- **GET** `/requests`
+- **Query Parameters**:
+  - `startDate` (optional): ISO date string
+  - `endDate` (optional): ISO date string
+
+### Cancel All In-Progress Requests
+- **POST** `/requests/cancel-all-in-progress`
+
+
+## Development
+
+### Building
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run build
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+MIT
+

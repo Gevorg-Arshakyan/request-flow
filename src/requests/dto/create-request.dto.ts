@@ -1,6 +1,7 @@
 import { IsString, IsNotEmpty } from 'class-validator';
+import { ICreateRequest } from '../interfaces/request.interface';
 
-export class CreateRequestDto {
+export class CreateRequestDto implements ICreateRequest {
   @IsString()
   @IsNotEmpty()
   topic: string;
