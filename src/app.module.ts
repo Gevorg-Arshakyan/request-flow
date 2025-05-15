@@ -21,7 +21,8 @@ import configuration from './configurations/config';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: true, //todo  WARNING: set to false in production
+        synchronize: false,
+        logging: true,
       }),
     }),
     RequestsModule,

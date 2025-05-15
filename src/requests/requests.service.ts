@@ -5,11 +5,15 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
-import { Request, RequestStatus } from './entities/request.entity';
-import { CreateRequestDto } from './dto/create-request.dto';
-import { CompleteRequestDto } from './dto/complete-request.dto';
-import { CancelRequestDto } from './dto/cancel-request.dto';
-import { FilterRequestsDto } from './dto/filter-requests.dto';
+import { Request } from './entities/request.entity';
+import { RequestStatus } from './enums/request-status.enum';
+import {
+  ICreateRequest,
+  ICompleteRequest,
+  ICancelRequest,
+  IFilterRequests,
+  IRequest,
+} from './interfaces/request.interface';
 
 @Injectable()
 export class RequestsService {
@@ -18,12 +22,12 @@ export class RequestsService {
     private requestsRepository: Repository<Request>,
   ) {}
 
-  async create(createRequestDto: CreateRequestDto): Promise<Request> {
-    const request = this.requestsRepository.create(createRequestDto);
+  async create(createRequest: ICreateRequest): Promise<IRequest> {
+    const request = this.requestsRepository.create(createRequest);
     return await this.requestsRepository.save(request);
   }
 
-  async takeInProgress(id: number): Promise<Request> {
+  async takeInProgress(id: number): Promise<IRequest> {
     const request = await this.requestsRepository.findOne({ where: { id } });
     if (!request) {
       throw new NotFoundException(`Request with ID ${id} not found`);
@@ -39,8 +43,8 @@ export class RequestsService {
 
   async complete(
     id: number,
-    completeRequestDto: CompleteRequestDto,
-  ): Promise<Request> {
+    completeRequest: ICompleteRequest,
+  ): Promise<IRequest> {
     const request = await this.requestsRepository.findOne({ where: { id } });
     if (!request) {
       throw new NotFoundException(`Request with ID ${id} not found`);
@@ -51,14 +55,11 @@ export class RequestsService {
       );
     }
     request.status = RequestStatus.COMPLETED;
-    request.solution = completeRequestDto.solution;
+    request.solution = completeRequest.solution;
     return await this.requestsRepository.save(request);
   }
 
-  async cancel(
-    id: number,
-    cancelRequestDto: CancelRequestDto,
-  ): Promise<Request> {
+  async cancel(id: number, cancelRequest: ICancelRequest): Promise<IRequest> {
     const request = await this.requestsRepository.findOne({ where: { id } });
     if (!request) {
       throw new NotFoundException(`Request with ID ${id} not found`);
@@ -67,12 +68,12 @@ export class RequestsService {
       throw new BadRequestException('Completed requests cannot be cancelled');
     }
     request.status = RequestStatus.CANCELLED;
-    request.cancellationReason = cancelRequestDto.cancellationReason;
+    request.cancellationReason = cancelRequest.cancellationReason;
     return await this.requestsRepository.save(request);
   }
 
-  async findAll(filterDto: FilterRequestsDto): Promise<Request[]> {
-    const { startDate, endDate } = filterDto;
+  async findAll(filter: IFilterRequests): Promise<IRequest[]> {
+    const { startDate, endDate } = filter;
     const where: any = {};
 
     if (startDate && endDate) {

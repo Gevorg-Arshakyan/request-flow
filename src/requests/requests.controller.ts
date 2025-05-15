@@ -4,19 +4,19 @@ import { CreateRequestDto } from './dto/create-request.dto';
 import { CompleteRequestDto } from './dto/complete-request.dto';
 import { CancelRequestDto } from './dto/cancel-request.dto';
 import { FilterRequestsDto } from './dto/filter-requests.dto';
-import { Request } from './entities/request.entity';
+import { IRequest } from './interfaces/request.interface';
 
 @Controller('requests')
 export class RequestsController {
   constructor(private readonly requestsService: RequestsService) {}
 
   @Post()
-  create(@Body() createRequestDto: CreateRequestDto): Promise<Request> {
+  create(@Body() createRequestDto: CreateRequestDto): Promise<IRequest> {
     return this.requestsService.create(createRequestDto);
   }
 
   @Put(':id/take-in-progress')
-  takeInProgress(@Param('id') id: string): Promise<Request> {
+  takeInProgress(@Param('id') id: string): Promise<IRequest> {
     return this.requestsService.takeInProgress(+id);
   }
 
@@ -24,7 +24,7 @@ export class RequestsController {
   complete(
     @Param('id') id: string,
     @Body() completeRequestDto: CompleteRequestDto,
-  ): Promise<Request> {
+  ): Promise<IRequest> {
     return this.requestsService.complete(+id, completeRequestDto);
   }
 
@@ -32,12 +32,12 @@ export class RequestsController {
   cancel(
     @Param('id') id: string,
     @Body() cancelRequestDto: CancelRequestDto,
-  ): Promise<Request> {
+  ): Promise<IRequest> {
     return this.requestsService.cancel(+id, cancelRequestDto);
   }
 
   @Get()
-  findAll(@Query() filterDto: FilterRequestsDto): Promise<Request[]> {
+  findAll(@Query() filterDto: FilterRequestsDto): Promise<IRequest[]> {
     return this.requestsService.findAll(filterDto);
   }
 
